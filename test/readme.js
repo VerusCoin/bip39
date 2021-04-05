@@ -15,7 +15,7 @@ test('README example 1', function (t) {
   t.equal(bip39.mnemonicToEntropy(mnemonic), entropy)
 })
 
-test('README example 2', function (t) {
+test('README example 2', async function (t) {
   const stub = {
     randombytes: function (size) {
       return Buffer.from('qwertyuiopasdfghjklzxcvbnm[];,./'.slice(0, size), 'utf8')
@@ -24,7 +24,7 @@ test('README example 2', function (t) {
   const proxiedbip39 = proxyquire('../', stub)
 
   // mnemonic strength defaults to 128 bits
-  const mnemonic = proxiedbip39.generateMnemonic()
+  const mnemonic = await proxiedbip39.generateMnemonic()
 
   t.plan(2)
   t.equal(mnemonic, 'imitate robot frame trophy nuclear regret saddle around inflict case oil spice')

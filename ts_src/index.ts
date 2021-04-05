@@ -186,18 +186,18 @@ export function entropyToMnemonic(
     : words.join(' ');
 }
 
-export function generateMnemonic(
+export async function generateMnemonic(
   strength?: number,
-  rng?: (size: number) => Buffer,
+  rng?: (size: number) => Buffer | Promise<Buffer>,
   wordlist?: string[],
-): string {
+): Promise<string> {
   strength = strength || 128;
   if (strength % 32 !== 0) {
     throw new TypeError(INVALID_ENTROPY);
   }
   rng = rng || randomBytes;
 
-  return entropyToMnemonic(rng(strength / 8), wordlist);
+  return entropyToMnemonic(await rng(strength / 8), wordlist);
 }
 
 export function validateMnemonic(

@@ -14,7 +14,7 @@ function testVector (description, wordlist, password, v, i) {
   var vmnemonic = v[1]
   var vseedHex = v[2]
 
-  test('for ' + description + '(' + i + '), ' + ventropy, function (t) {
+  test('for ' + description + '(' + i + '), ' + ventropy, async function (t) {
     t.plan(6)
 
     t.equal(bip39.mnemonicToEntropy(vmnemonic, wordlist), ventropy, 'mnemonicToEntropy returns ' + ventropy.slice(0, 40) + '...')
@@ -25,7 +25,7 @@ function testVector (description, wordlist, password, v, i) {
     t.equal(bip39.entropyToMnemonic(ventropy, wordlist), vmnemonic, 'entropyToMnemonic returns ' + vmnemonic.slice(0, 40) + '...')
 
     function rng () { return Buffer.from(ventropy, 'hex') }
-    t.equal(bip39.generateMnemonic(undefined, rng, wordlist), vmnemonic, 'generateMnemonic returns RNG entropy unmodified')
+    t.equal(await bip39.generateMnemonic(undefined, rng, wordlist), vmnemonic, 'generateMnemonic returns RNG entropy unmodified')
     t.equal(bip39.validateMnemonic(vmnemonic, wordlist), true, 'validateMnemonic returns true')
   })
 }
@@ -105,17 +105,17 @@ test('UTF8 passwords', function (t) {
   })
 })
 
-test('generateMnemonic can vary entropy length', function (t) {
-  var words = bip39.generateMnemonic(160).split(' ')
+test('generateMnemonic can vary entropy length', async function (t) {
+  var words = (await bip39.generateMnemonic(160)).split(' ')
 
   t.plan(1)
   t.equal(words.length, 15, 'can vary generated entropy bit length')
 })
 
-test('generateMnemonic requests the exact amount of data from an RNG', function (t) {
+test('generateMnemonic requests the exact amount of data from an RNG', async function (t) {
   t.plan(1)
 
-  bip39.generateMnemonic(160, function (size) {
+  await bip39.generateMnemonic(160, function (size) {
     t.equal(size, 160 / 8)
     return Buffer.allocUnsafe(size)
   })
